@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 
-ARG OPENCODE_VERSION=
+ARG OPENCODE_VERSION=v1.1.36
 
 # Install apt packages
 RUN apt-get update && \
