@@ -48,11 +48,11 @@ ENV PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin${PATH+:
 
 # Install brew packages
 RUN brew install \
+	bun \
     gh \
     node
 
-# Install bun
-RUN curl -fsSL https://bun.sh/install | bash
+# Update PATH
 ENV PATH=$HOME/.bun/bin:$PATH
 
 # Install opencode
