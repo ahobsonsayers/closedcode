@@ -48,7 +48,8 @@ ENV PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin${PATH+:
 
 # Install brew packages
 RUN brew install \
-    gh
+    gh \
+    node
 
 # Install bun
 RUN curl -fsSL https://bun.sh/install | bash
