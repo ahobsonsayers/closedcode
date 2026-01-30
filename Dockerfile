@@ -48,11 +48,11 @@ ENV PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin${PATH+:
 
 # Install brew packages
 RUN brew install \
-    gh \
-    oven-sh/bun/bun
+    gh
 
-# Add bun bin to PATH
-ENV PATH="$HOME/.bun/bin:$PATH"
+# Install bun
+RUN curl -fsSL https://bun.sh/install | bash
+ENV PATH=$HOME/.bun/bin:$PATH
 
 # Install opencode
 RUN bun install -g opencode-ai@$OPENCODE_VERSION
