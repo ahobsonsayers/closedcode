@@ -17,7 +17,7 @@ OpenCode is a very powerful tool. However, running it directly on your host mach
 
 There are a few Docker images for OpenCode out there, so what makes this one different?
 
-- Small — at 300MB this image is quite small by comparison to other images.
+- Small — at ~500MB this image is quite small by comparison to other images.
 - Batteries included — comes with most of the standard tools OpenCode typically uses, and that you might need. This includes core utils, git, and ssh as expected, but also bun and gh (GitHub CLI).
   Note: To keep the image small and unopinionated, it does not have languages like Python, Node, etc., installed. See next point for info on how these are supported.
 - Extensible — Extra tools, languages, or packages from either `brew` (recommended) or `apt` can be installed at runtime to add missing software that you require.
