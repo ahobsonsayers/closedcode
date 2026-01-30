@@ -31,7 +31,7 @@ jobs:
       - name: Get latest version
         id: get-latest-version
         run: |
-          OPENCODE_LATEST=$(npm view opencode version | tail -n 1)
+          OPENCODE_LATEST=$(npm view opencode-ai version | tail -n 1)
 
           echo "opencode=$OPENCODE_LATEST" >> $GITHUB_OUTPUT
 
