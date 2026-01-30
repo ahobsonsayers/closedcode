@@ -2,6 +2,8 @@ FROM ubuntu:latest
 
 ARG OPENCODE_VERSION=1.1.45
 
+ENV TZ=UTC
+
 # Install apt packages
 RUN apt-get update && \
     apt-get install -y \
@@ -21,7 +23,7 @@ RUN apt-get update && \
     wget && \
     rm -rf /var/lib/apt/lists/*
 
-# Remove ubuntu  user and home    
+# Remove ubuntu  user and home
 RUN rm -rf /root && \
     userdel --remove ubuntu
 
@@ -38,7 +40,7 @@ ENV HOME=/home/opencode
 RUN NONINTERACTIVE=1 && \
     curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash
 
-# Set required homebrew envs   
+# Set required homebrew envs
 ENV HOMEBREW_PREFIX="/home/linuxbrew/.linuxbrew"
 ENV HOMEBREW_CELLAR="/home/linuxbrew/.linuxbrew/Cellar"
 ENV HOMEBREW_REPOSITORY="/home/linuxbrew/.linuxbrew/Homebrew"
@@ -49,12 +51,15 @@ RUN brew install \
     gh \
     oven-sh/bun/bun
 
+# Add bun bin to PATH
+ENV PATH="$HOME/.bun/bin:$PATH"
+
 # Install opencode
 RUN bun install -g opencode-ai@$OPENCODE_VERSION
 
-# Copy entrypoint script
+# Add entrypoint script
 COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+RUN sudo chmod +x /entrypoint.sh
 
 # Setup persistence
 RUN mkdir -p /home/opencode/.config/opencode && \
