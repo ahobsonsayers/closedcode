@@ -18,7 +18,8 @@ RUN apt-get update && \
     sudo \
     unzip \
     util-linux \
-    wget
+    wget && \
+    rm -rf /var/lib/apt/lists/*
 
 # Remove ubuntu  user and home    
 RUN rm -rf /root && \
@@ -38,10 +39,10 @@ RUN NONINTERACTIVE=1 && \
     curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash
 
 # Set required homebrew envs   
-ENV HOMEBREW_PREFIX="/home/linuxbrew/.linuxbrew";
-ENV HOMEBREW_CELLAR="/home/linuxbrew/.linuxbrew/Cellar";
-ENV HOMEBREW_REPOSITORY="/home/linuxbrew/.linuxbrew/Homebrew";
-ENV PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin${PATH+:$PATH}";
+ENV HOMEBREW_PREFIX="/home/linuxbrew/.linuxbrew"
+ENV HOMEBREW_CELLAR="/home/linuxbrew/.linuxbrew/Cellar"
+ENV HOMEBREW_REPOSITORY="/home/linuxbrew/.linuxbrew/Homebrew"
+ENV PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin${PATH+:$PATH}"
 
 # Install brew packages
 RUN brew install \
@@ -50,6 +51,10 @@ RUN brew install \
 
 # Install opencode
 RUN bun install -g opencode-ai@$OPENCODE_VERSION
+
+# Copy entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 # Setup persistence
 RUN mkdir -p /home/opencode/.config/opencode && \
@@ -60,4 +65,4 @@ VOLUME /home/opencode/.local/share/opencode # Persist opencode sessions
 
 WORKDIR "$HOME/workspace"
 
-ENTRYPOINT ["opencode"]
+ENTRYPOINT ["/entrypoint.sh", "opencode"]

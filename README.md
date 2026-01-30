@@ -2,13 +2,18 @@
 
 ClosedCode is a Docker container for running OpenCode in an isolated environment.
 
-## Why?
+## Why? <!-- omit from toc -->
 
-OpenCode is a very powerful tool. However, running it directly on your host machine—especially with "YOLO" permissions—can pose security risks.
+OpenCode is a very powerful tool. However, running it directly on your host machine—especially with "YOLO" permissions—can pose security ri
 
 **ClosedCode** runs OpenCode (including its Web UI if desired) within an isolated container environment, significantly reducing the blast radius if the agent does something dumb—particularly the dreaded `rm -rf /`.
 
-## Features
+- [Usage](#usage)
+    - [Why is installation by `brew` recommended?](#why-is-installation-by-brew-recommended)
+- [Persistence and Volumes](#persistence-and-volumes)
+- [Other files e.g. git, ssh etc.](#other-files-eg-git-ssh-etc)
+- [Web UI](#web-ui)
+- [Extending](#extending)
 
 There are a few Docker images for OpenCode out there, so what makes this one different?
 
@@ -16,10 +21,6 @@ There are a few Docker images for OpenCode out there, so what makes this one dif
 - Batteries included — comes with most of the standard tools OpenCode typically uses, and that you might need. This includes core utils, git, and ssh as expected, but also bun and gh (GitHub CLI).
   Note: To keep the image small and unopinionated, it does not have languages like Python, Node, etc., installed. See next point for info on how these are supported.
 - Extensible — Extra tools, languages, or packages from either `brew` (recommended) or `apt` can be installed at runtime to add missing software that you require.
-
-#### Why is installation by `brew` recommended?
-
-Homebrew has a huge array of tools and packages (~7000), many of which are missing in apt. As such, Homebrew is extremely likely to have the software you require, and its cache is easy to persist, which can be leveraged to make startup installs faster. Info on this to be added.
 
 ## Usage
 
@@ -32,6 +33,33 @@ For your current working directory, this command is:
 ```bash
 docker run -it --rm -v "$(pwd):/home/opencode/workspace" closedcode:latest
 ```
+
+# **Installing Additional Packages**
+
+You can install additional packages at container startup using environment variables.
+
+This is useful when you need languages or tools that aren't included in the base image.
+
+You can set:
+
+- `APT_PACKAGES` environment variable to install `apt` packages
+- `BREW_PACKAGES` environment variable to install `brew` packages (recommended)
+
+Packages should be space separated, so remember to quote your values.
+
+For example, you can run:
+
+```bash
+docker run -it --rm \
+  -v "$(pwd):/home/opencode/workspace" \
+  -e "APT_PACKAGES=python3 zip" \
+  -e "BREW_PACKAGES=node go" \
+  closedcode:latest
+```
+
+#### Why is installation by `brew` recommended?
+
+Homebrew has a huge array of tools and packages (~7000), many of which are missing in apt. As such, Homebrew is extremely likely to have the software you require, and its cache is easy to persist, which can be leveraged to make startup installs faster. Info on this to be added.
 
 ## Persistence and Volumes
 
@@ -106,6 +134,6 @@ And then run with:
 docker compose up -d
 ```
 
-### Extending
+## Extending
 
 This image also works well as a base image to be extended and worked upon. An example of this can be seen in the OpenChamber repository, which offers a more feature-rich web UI for developing with OpenCode.
