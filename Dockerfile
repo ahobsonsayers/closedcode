@@ -2,8 +2,7 @@ FROM ubuntu:latest
 
 ARG OPENCODE_VERSION=v1.1.36
 
-RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
-
+# Install apt packages
 RUN apt-get update && \
     apt-get install -y \
     build-essential \
@@ -14,37 +13,45 @@ RUN apt-get update && \
     git \
     grep \
     jq \
-    nodejs \
-    openssh \
-    python3 \
+    openssh-client \
     sed \
     sudo \
     unzip \
     util-linux \
     wget
 
-# Remove current user and home    
-RUN rm -rf $HOME && \
+# Remove ubuntu  user and home    
+RUN rm -rf /root && \
     userdel --remove ubuntu
-
-ENV HOME="/home/opencode"
 
 # Create opencode user and home
 # User will have root access via sudo
-RUN useradd opencode --uid 1000 --home-dir "$HOME" --create-home && \
+RUN useradd opencode --uid 1000 --home-dir /home/opencode --create-home && \
     echo "opencode ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/opencode && \
     chmod 0440 /etc/sudoers.d/opencode
 
 USER opencode
+ENV HOME=/home/opencode
 
-# Install bun
-RUN curl -fsSL https://bun.sh/install | bash
-ENV PATH=$HOME/.bun/bin:$PATH
+# Install homebrew
+RUN NONINTERACTIVE=1 && \
+    curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash
+
+# Set required homebrew envs   
+ENV HOMEBREW_PREFIX="/home/linuxbrew/.linuxbrew";
+ENV HOMEBREW_CELLAR="/home/linuxbrew/.linuxbrew/Cellar";
+ENV HOMEBREW_REPOSITORY="/home/linuxbrew/.linuxbrew/Homebrew";
+ENV PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin${PATH+:$PATH}";
+
+# Install brew packages
+RUN brew install \
+    gh \
+    oven-sh/bun/bun
 
 # Install opencode
-RUN bun add -g opencode-ai@$OPENCODE_VERSION
+RUN bun install -g opencode-ai@$OPENCODE_VERSION
 
-# Persistence
+# Setup persistence
 RUN mkdir -p /home/opencode/.config/opencode && \
     mkdir -p /home/opencode/.local/share/opencode
 
@@ -52,7 +59,5 @@ VOLUME /home/opencode/.config/opencode # Persist opencode config
 VOLUME /home/opencode/.local/share/opencode # Persist opencode sessions
 
 WORKDIR "$HOME/workspace"
-
-EXPOSE 3000
 
 ENTRYPOINT ["opencode"]
