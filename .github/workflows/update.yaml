@@ -1,4 +1,4 @@
-name: Check for updates
+name: Update OpenCode Version
 
 on:
   schedule:
