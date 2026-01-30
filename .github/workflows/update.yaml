@@ -1,0 +1,70 @@
+name: Check for updates
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Everyday at 12am
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    name: Update versions
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Get current version
+        id: get-current-version
+        run: |
+          OPENCODE_VERSION=$(grep "^ARG OPENCODE_VERSION=" Dockerfile | cut -d '=' -f2)
+
+          echo "opencode=$OPENCODE_VERSION" >> $GITHUB_OUTPUT
+
+          echo "
+          Current OpenCode Version: $OPENCODE_VERSION
+          "
+
+      - name: Get latest versions
+        id: get-latest-version
+        run: |
+          OPENCODE_LATEST=$(npm view opencode version | tail -n 1)
+
+          echo "opencode=$OPENCODE_LATEST" >> $GITHUB_OUTPUT
+
+          echo "
+          Latest OpenCode Version: $OPENCODE_LATEST
+          "
+
+      - name: Compare and update
+        id: compare-update
+        run: |
+          if [ "$CURRENT_OPENCODE_VERSION" != "$LATEST_OPENCODE_VERSION" ]; then
+            echo "needs_update=true" >> $GITHUB_OUTPUT
+          else
+            echo "needs_update=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          CURRENT_OPENCODE_VERSION: ${{ steps.get-current-version.outputs.opencode }}
+          LATEST_OPENCODE_VERSION: ${{ steps.get-latest-version.outputs.opencode }}
+
+      - name: Update Dockerfile
+        if: steps.compare-update.outputs.needs_update == 'true'
+        run: |
+          sd "^ARG OPENCODE_VERSION=.*" "ARG OPENCODE_VERSION=$LATEST_OPENCODE_VERSION" Dockerfile
+        env:
+          LATEST_OPENCODE_VERSION: ${{ steps.get-latest-version.outputs.opencode }}
+
+      - name: Commit and push
+        if: steps.compare-update.outputs.needs_update == 'true'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add Dockerfile
+          git commit -m "Update OpenCode to $OPENCODE_VERSION"
+          git push
+        env:
+          OPENCODE_VERSION: ${{ steps.get-latest-version.outputs.opencode }}
