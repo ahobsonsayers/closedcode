@@ -1,7 +1,7 @@
 services:
   opencode:
     container_name: opencode
-    image: arranhs/closedcode
+    image: arranhs/closedcode:latest
     build:
       context: .
     restart: unless-stopped
@@ -13,5 +13,3 @@ services:
       - ~/opencode/.local/share/opencode:/home/opencode/.local/share/opencode # opencode sessions
       - ~/.gitconfig:/home/opencode/.gitconfig:ro # git config
       - ~/.config/gh/hosts.yml:/home/opencode/.config/gh/hosts.yml:ro # github cli config
-    environment:
-      - TZ=Europe/London
