@@ -12,19 +12,19 @@ env:
   DOCKER_IMAGE: arranhs/closedcode
 
 jobs:
-  get-versions:
-    name: Get versions
+  get-version:
+    name: Get version
     runs-on: ubuntu-latest
 
     outputs:
-      opencode-version: ${{ steps.extract-versions.outputs.opencode }}
+      opencode-version: ${{ steps.get-version.outputs.opencode }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Extract versions
-        id: extract-versions
+      - name: Get version
+        id: get-version
         run: |
           OPENCODE_VERSION=$(grep "^ARG OPENCODE_VERSION=" Dockerfile | cut -d '=' -f2)
 
