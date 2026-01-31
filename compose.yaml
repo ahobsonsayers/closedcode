@@ -10,6 +10,9 @@ services:
     volumes:
       - ~/opencode/workspace:/home/opencode/workspace # code files
       - ~/opencode/.config/opencode:/home/opencode/.config/opencode # opencode config
-      - ~/opencode/.local/share/opencode:/home/opencode/.local/share/opencode # opencode sessions
+      - opencode:/home/opencode/.local/share/opencode/storage # opencode data
       - ~/.gitconfig:/home/opencode/.gitconfig:ro # git config
       - ~/.config/gh/hosts.yml:/home/opencode/.config/gh/hosts.yml:ro # github cli config
+
+volumes:
+  opencode:

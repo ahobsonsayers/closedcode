@@ -48,7 +48,7 @@ ENV PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin${PATH+:
 
 # Install brew packages
 RUN brew install \
-	bun \
+    bun \
     gh \
     node
 
@@ -57,6 +57,11 @@ ENV PATH=$HOME/.bun/bin:$PATH
 
 # Install opencode
 RUN bun install -g opencode-ai@$OPENCODE_VERSION
+
+ENV OPENCODE_CONFIG='{ \
+  "$schema": "https://opencode.ai/config.json", \
+  "autoupdate": false \
+}'
 
 # Add entrypoint script
 COPY entrypoint.sh /entrypoint.sh
@@ -67,7 +72,7 @@ RUN mkdir -p /home/opencode/.config/opencode && \
     mkdir -p /home/opencode/.local/share/opencode
 
 VOLUME /home/opencode/.config/opencode # Persist opencode config
-VOLUME /home/opencode/.local/share/opencode # Persist opencode sessions
+VOLUME /home/opencode/.local/share/opencode # Persist opencode data
 
 WORKDIR "$HOME/workspace"
 
