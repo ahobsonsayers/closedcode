@@ -8,11 +8,10 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - ~/opencode/workspace:/home/opencode/workspace # code files
-      - ~/opencode/.config/opencode:/home/opencode/.config/opencode # opencode config
+      - ~/closedcode:/home/opencode/workspace # workspace files
+      - ~/.config/opencode:/home/opencode/.config/opencode # opencode config
       - opencode:/home/opencode/.local/share/opencode/storage # opencode data
       - ~/.gitconfig:/home/opencode/.gitconfig:ro # git config
       - ~/.config/gh/hosts.yml:/home/opencode/.config/gh/hosts.yml:ro # github cli config
-
 volumes:
   opencode:

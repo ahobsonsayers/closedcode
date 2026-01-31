@@ -20,7 +20,8 @@ RUN apt-get update && \
     sudo \
     unzip \
     util-linux \
-    wget && \
+    wget \
+    zip && \
     rm -rf /var/lib/apt/lists/*
 
 # Remove ubuntu  user and home
