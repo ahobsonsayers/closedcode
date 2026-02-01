@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      opencode-version: ${{ steps.get-version.outputs.opencode }}
+      opencode-version: ${{ steps.get-version.outputs.opencode-version }}
 
     steps:
       - name: Checkout code
@@ -28,7 +28,7 @@ jobs:
         run: |
           OPENCODE_VERSION=$(grep "^ARG OPENCODE_VERSION=" Dockerfile | cut -d '=' -f2)
 
-          echo "opencode=$OPENCODE_VERSION" >> $GITHUB_OUTPUT
+          echo "opencode-version=$OPENCODE_VERSION" >> $GITHUB_OUTPUT
 
           echo "
           OpenCode Version: $OPENCODE_VERSION
@@ -121,4 +121,4 @@ jobs:
             $(printf "$DOCKER_IMAGE@sha256:%s " *)
         env:
           DOCKER_IMAGE: ${{ env.DOCKER_IMAGE }}
-          OPENCODE_VERSION: ${{ needs.get-versions.outputs.opencode-version }}
+          OPENCODE_VERSION: ${{ needs.get-version.outputs.opencode-version }}
