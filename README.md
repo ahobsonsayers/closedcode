@@ -9,6 +9,7 @@ OpenCode is a very powerful tool. However, running it directly on your host mach
 **ClosedCode** runs OpenCode (including its Web UI if desired) within an isolated container environment, significantly reducing the blast radius if the agent does something dumb—particularly the dreaded `rm -rf /`.
 
 - [Usage](#usage)
+- [Environment Variables](#environment-variables)
 - [Installing Additional Packages](#installing-additional-packages)
   - [Why is installation by `brew` recommended?](#why-is-installation-by-brew-recommended)
 - [Persistence and Volumes](#persistence-and-volumes)
@@ -34,6 +35,15 @@ For your current working directory, this command is:
 ```bash
 docker run -it --rm -v "$(pwd):/home/opencode/workspace" closedcode:latest
 ```
+
+## Environment Variables
+
+When running, the following environment variables can we set.
+
+- `OPENCODE_HOSTNAME` - Address the Web UI binds to (Default: `0.0.0.0`)
+- `OPENCODE_PORT` - Port the Web UI listens on (Default: `4096`)
+- `OPENCODE_SERVER_USERNAME` - Username for Web UI authentication (Default: `opencode`)
+- `OPENCODE_SERVER_PASSWORD` - Password for Web UI authentication (Default: not set/no auth)
 
 ## Installing Additional Packages
 

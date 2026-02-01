@@ -39,7 +39,6 @@ RUN useradd opencode --uid 1000 --home-dir /home/opencode --create-home && \
 USER opencode
 ENV HOME=/home/opencode
 
-
 # Install homebrew (using tar for small size)
 RUN sudo mkdir -p /home/linuxbrew/.linuxbrew && \
     sudo chown -R "$(id -u):$(id -g)" /home/linuxbrew/.linuxbrew && \
@@ -79,5 +78,9 @@ VOLUME "$HOME/.config/opencode"
 VOLUME "$HOME/.local/share/opencode"
 
 WORKDIR "$HOME/workspace"
+
+# Environment variables for opencode web
+ENV OPENCODE_HOSTNAME=0.0.0.0
+ENV OPENCODE_PORT=4096
 
 ENTRYPOINT ["/entrypoint.sh", "bun", "run", "opencode"]

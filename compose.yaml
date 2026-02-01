@@ -4,11 +4,13 @@ services:
     image: arranhs/closedcode:latest
     build:
       context: .
-    command: ["web", "--hostname", "0.0.0.0", "--port", "3000"]
+    command: ["web"]
     restart: unless-stopped
-    user: 1000:1000
     ports:
-      - 3000:3000
+      - 4096:4096
+    environment:
+      - OPENCODE_HOSTNAME=0.0.0.0
+      - OPENCODE_PORT=4096
     volumes:
       - ./data/workspace:/home/opencode/workspace
       - ./data/.config/opencode:/home/opencode/.config/opencode
