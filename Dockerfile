@@ -19,6 +19,7 @@ RUN  curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && \
     jq \
     nodejs \
     openssh-client \
+    python3 \
     sed \
     sudo \
     tar \
