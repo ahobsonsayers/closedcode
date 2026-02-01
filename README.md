@@ -4,9 +4,16 @@ ClosedCode is a Docker container for running OpenCode in an isolated environment
 
 ## Why? <!-- omit from toc -->
 
-OpenCode is a very powerful tool. However, running it directly on your host machine—especially with "YOLO" permissions—can pose security ri
+OpenCode is a very powerful tool. However, running it directly on your host machine - especially with "YOLO" permissions - can pose serious security risk.
 
-**ClosedCode** runs OpenCode (including its Web UI if desired) within an isolated container environment, significantly reducing the blast radius if the agent does something dumb—particularly the dreaded `rm -rf /`.
+**ClosedCode** runs OpenCode (including its Web UI if desired) within an isolated container environment, significantly reducing the blast radius if the agent does something dumb—particularly the dreaded `rm -rf /`
+
+There are a few Docker images for OpenCode out there, so what makes this one different?
+
+- Small — at ~500MB this image is quite small by comparison to other images - but it has still got...
+- Batteries included — comes with most of the standard tools OpenCode typically uses, and that you usually need. This includes core utils, git, and ssh as expected, but also bun and gh (GitHub CLI).
+  Note: To keep the image small and unopinionated, it does not have languages like Python, Node, etc., installed. See next point for info on how these are supported.
+- Extensible — Extra tools, languages, or packages from either `brew` (recommended) or `apt` can be installed at runtime to add missing software that you require.
 
 - [Usage](#usage)
 - [Environment Variables](#environment-variables)
@@ -17,13 +24,6 @@ OpenCode is a very powerful tool. However, running it directly on your host mach
 - [Web UI](#web-ui)
 - [Extending](#extending)
 
-There are a few Docker images for OpenCode out there, so what makes this one different?
-
-- Small — at ~500MB this image is quite small by comparison to other images.
-- Batteries included — comes with most of the standard tools OpenCode typically uses, and that you might need. This includes core utils, git, and ssh as expected, but also bun and gh (GitHub CLI).
-  Note: To keep the image small and unopinionated, it does not have languages like Python, Node, etc., installed. See next point for info on how these are supported.
-- Extensible — Extra tools, languages, or packages from either `brew` (recommended) or `apt` can be installed at runtime to add missing software that you require.
-
 ## Usage
 
 By default, when the container is run, it will run the `opencode` command with no args in the default working directory (`/home/opencode/workspace`).
@@ -33,44 +33,8 @@ To get started quickly, simply mount your folder to this directory.
 For your current working directory, this command is:
 
 ```bash
-docker run -it --rm -v "$(pwd):/home/opencode/workspace" closedcode:latest
+docker run -it --rm -v "$(pwd):/home/opencode/workspace" arranhs/closedcode:latest
 ```
-
-## Environment Variables
-
-When running, the following environment variables can we set.
-
-- `OPENCODE_HOSTNAME` - Address the Web UI binds to (Default: `0.0.0.0`)
-- `OPENCODE_PORT` - Port the Web UI listens on (Default: `4096`)
-- `OPENCODE_SERVER_USERNAME` - Username for Web UI authentication (Default: `opencode`)
-- `OPENCODE_SERVER_PASSWORD` - Password for Web UI authentication (Default: not set/no auth)
-
-## Installing Additional Packages
-
-You can install additional packages at container startup using environment variables.
-
-This is useful when you need languages or tools that aren't included in the base image.
-
-You can set:
-
-- `APT_PACKAGES` environment variable to install `apt` packages
-- `BREW_PACKAGES` environment variable to install `brew` packages (recommended)
-
-Packages should be space separated, so remember to quote your values.
-
-For example, you can run:
-
-```bash
-docker run -it --rm \
-  -v "$(pwd):/home/opencode/workspace" \
-  -e "APT_PACKAGES=python3 zip" \
-  -e "BREW_PACKAGES=node go" \
-  closedcode:latest
-```
-
-### Why is installation by `brew` recommended?
-
-Homebrew has a huge array of tools and packages (~7000), many of which are missing in apt. As such, Homebrew is extremely likely to have the software you require, and its cache is easy to persist, which can be leveraged to make startup installs faster. Info on this to be added.
 
 ## Persistence and Volumes
 
@@ -115,6 +79,33 @@ docker run -it --rm \
   closedcode:latest
 ```
 
+## Installing Additional Packages
+
+You can install additional packages at container startup using environment variables.
+
+This is useful when you need languages or tools that aren't included in the base image.
+
+You can set:
+
+- `APT_PACKAGES` environment variable to install `apt` packages
+- `BREW_PACKAGES` environment variable to install `brew` packages (recommended)
+
+Packages should be space separated, so remember to quote your values.
+
+For example, you can run:
+
+```bash
+docker run -it --rm \
+  -v "$(pwd):/home/opencode/workspace" \
+  -e "APT_PACKAGES=python3 zip" \
+  -e "BREW_PACKAGES=node go" \
+  closedcode:latest
+```
+
+### Why is installation by `brew` recommended?
+
+Homebrew has a huge array of tools and packages (~7000), many of which are missing in apt. As such, Homebrew is extremely likely to have the software you require, and its cache is easy to persist, which can be leveraged to make startup installs faster. Info on this to be added.
+
 ## Web UI
 
 It is also possible to run the OpenCode Web UI for development on the go or in your local browser.
@@ -127,16 +118,18 @@ To run the Web UI using all the previously mentioned mounts, you can create a `c
 services:
   closedcode:
     image: closedcode:latest
-    command: ["--web", "--port", "3000"]
+    command: ["web"]
     ports:
-      - "3000:3000" # You can use a different port
+      - 4096:4096
     volumes:
-      - .:/home/opencode/workspace # code files
+      - ~/opencode:/home/opencode/workspace # code files
       - ~/.config/opencode:/home/opencode/.config/opencode # opencode config
-      - ~/.local/share/opencode:/home/opencode/.local/share/opencode # opencode sessions
+      - opencode:/home/opencode/.local/share/opencode # opencode data
       - ~/.gitconfig:/home/opencode/.gitconfig:ro # git config
       - ~/.ssh:/home/opencode/.ssh:ro # ssh keys
       - ~/.config/gh:/home/opencode/.config/gh:ro # github cli config
+volumes:
+  opencode:
 ```
 
 And then run with:
@@ -144,6 +137,16 @@ And then run with:
 ```bash
 docker compose up -d
 ```
+
+## Environment Variables
+
+When running, the following environment variables can we set.
+
+- `OPENCODE_HOSTNAME` - Address the Web UI binds to (Default: `0.0.0.0`)
+- `OPENCODE_PORT` - Port the Web UI listens on (Default: `4096`)
+- `OPENCODE_SERVER_USERNAME` - Username for Web UI authentication (Default: `opencode`)
+- `OPENCODE_SERVER_PASSWORD` - Password for Web UI authentication (Default: not set/no auth)
+
 
 ## Extending
 
