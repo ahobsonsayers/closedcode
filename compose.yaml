@@ -4,14 +4,14 @@ services:
     image: arranhs/closedcode:latest
     build:
       context: .
+    command: ["web", "--hostname", "0.0.0.0", "--port", "3000"]
     restart: unless-stopped
+    user: 1000:1000
     ports:
       - 3000:3000
     volumes:
-      - ~/closedcode:/home/opencode/workspace # workspace files
-      - ~/.config/opencode:/home/opencode/.config/opencode # opencode config
-      - opencode:/home/opencode/.local/share/opencode/storage # opencode data
-      - ~/.gitconfig:/home/opencode/.gitconfig:ro # git config
-      - ~/.config/gh/hosts.yml:/home/opencode/.config/gh/hosts.yml:ro # github cli config
-volumes:
-  opencode:
+      - ./data/workspace:/home/opencode/workspace
+      - ./data/.config/opencode:/home/opencode/.config/opencode
+      - ./data/.local/share/opencode:/home/opencode/.local/share/opencode
+      - ~/.gitconfig:/home/opencode/.gitconfig:ro
+      - ~/.config/gh/hosts.yml:/home/opencode/.config/gh/hosts.yml:ro
