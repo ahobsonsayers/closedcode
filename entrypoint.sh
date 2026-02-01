@@ -4,13 +4,13 @@ set -e
 echo "Installing apt packages"
 if [ -n "$APT_PACKAGES" ]; then
 	sudo apt-get update
-	sudo apt-get install -y $APT_PACKAGES
+	sudo apt-get install -y "$APT_PACKAGES"
 	sudo rm -rf /var/lib/apt/lists/*
 fi
 
 echo "Installing bre packages"
 if [ -n "$BREW_PACKAGES" ]; then
-	brew install $BREW_PACKAGES
+	brew install "$BREW_PACKAGES"
 fi
 
 echo "Fixing permissions"
