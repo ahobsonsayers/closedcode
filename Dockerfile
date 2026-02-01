@@ -5,8 +5,7 @@ ARG OPENCODE_VERSION=1.1.48
 ENV TZ=UTC
 
 # Install apt packages
-RUN  curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && \
-    apt-get update && \
+RUN apt-get update && \
     apt-get install -y \
     build-essential \
     ca-certificates \
@@ -17,9 +16,7 @@ RUN  curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && \
     git \
     grep \
     jq \
-    nodejs \
     openssh-client \
-    python3 \
     sed \
     sudo \
     tar \
@@ -75,9 +72,12 @@ RUN sudo chmod +x /entrypoint.sh
 RUN mkdir -p "$HOME/.config/opencode" && \
     mkdir -p "$HOME/.local/share/opencode"
 
-VOLUME "$HOME/.config/opencode" # Persist opencode config
-VOLUME "$HOME/.local/share/opencode" # Persist opencode data
+# Persist opencode config
+VOLUME "$HOME/.config/opencode"
+
+# Persist opencode data
+VOLUME "$HOME/.local/share/opencode"
 
 WORKDIR "$HOME/workspace"
 
-ENTRYPOINT ["/entrypoint.sh", "opencode"]
+ENTRYPOINT ["/entrypoint.sh", "bun", "run", "opencode"]
