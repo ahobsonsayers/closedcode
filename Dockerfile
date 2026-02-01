@@ -45,7 +45,7 @@ ENV HOME=/home/opencode
 
 # Install homebrew (using tar for small size)
 RUN sudo mkdir -p /home/linuxbrew/.linuxbrew && \
-    sudo chown -R "$(id -u):$(id -g)" /home/linuxbrew/.linuxbrew \
+    sudo chown -R "$(id -u):$(id -g)" /home/linuxbrew/.linuxbrew && \
     curl -L https://github.com/Homebrew/brew/tarball/main | \
     tar xz --strip-components 1 -C /home/linuxbrew/.linuxbrew
 
