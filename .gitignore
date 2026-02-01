@@ -48,4 +48,12 @@ Icon[]
 .AppleDesktop
 Network Trash Folder
 Temporary Items
-.apdisk
+.apdiskdata/
+
+# Ignore certain directories
+data/
+scratch/
+
+# Ignore certain files
+.env
+.secrets
