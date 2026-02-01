@@ -5,16 +5,19 @@ ARG OPENCODE_VERSION=1.1.48
 ENV TZ=UTC
 
 # Install apt packages
-RUN apt-get update && \
+RUN  curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && \
+    apt-get update && \
     apt-get install -y \
     build-essential \
     ca-certificates \
     coreutils \
     curl \
     findutils \
+    gh \
     git \
     grep \
     jq \
+    nodejs \
     openssh-client \
     sed \
     sudo \
@@ -45,12 +48,7 @@ RUN NONINTERACTIVE=1 && \
 ENV HOMEBREW_PREFIX="/home/linuxbrew/.linuxbrew"
 ENV HOMEBREW_CELLAR="/home/linuxbrew/.linuxbrew/Cellar"
 ENV HOMEBREW_REPOSITORY="/home/linuxbrew/.linuxbrew/Homebrew"
-ENV PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin${PATH+:$PATH}"
-
-# Install brew packages
-RUN brew install \
-    gh \
-    node
+ENV PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:$PATH"
 
 # Install bun
 RUN curl -fsSL https://bun.sh/install | bash
@@ -60,9 +58,9 @@ ENV PATH=$HOME/.bun/bin:$PATH
 RUN bun install -g opencode-ai@$OPENCODE_VERSION
 
 ENV OPENCODE_CONFIG='{ \
-  "$schema": "https://opencode.ai/config.json", \
-  "autoupdate": false \
-}'
+    "$schema": "https://opencode.ai/config.json", \
+    "autoupdate": false \
+    }'
 
 # Add entrypoint script
 COPY entrypoint.sh /entrypoint.sh
