@@ -14,6 +14,8 @@ if [ -n "$BREW_PACKAGES" ]; then
 fi
 
 echo "Fixing permissions"
-sudo chown -R $(id -u):$(id -g) "$HOME"
+sudo chown -R "$(id -u):$(id -g)" "$HOME"/workspace
+sudo chown -R "$(id -u):$(id -g)" "$HOME"/.config/opencode
+sudo chown -R "$(id -u):$(id -g)" "$HOME"/opencode/.local/share/opencode 
 
 exec "$@"

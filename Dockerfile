@@ -69,11 +69,11 @@ COPY entrypoint.sh /entrypoint.sh
 RUN sudo chmod +x /entrypoint.sh
 
 # Setup persistence
-RUN mkdir -p /home/opencode/.config/opencode && \
-    mkdir -p /home/opencode/.local/share/opencode
+RUN mkdir -p "$HOME/.config/opencode" && \
+    mkdir -p "$HOME/.local/share/opencode"
 
-VOLUME /home/opencode/.config/opencode # Persist opencode config
-VOLUME /home/opencode/.local/share/opencode # Persist opencode data
+VOLUME "$HOME/.config/opencode" # Persist opencode config
+VOLUME "$HOME/.local/share/opencode" # Persist opencode data
 
 WORKDIR "$HOME/workspace"
 
