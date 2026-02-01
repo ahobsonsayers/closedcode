@@ -9,7 +9,8 @@ OpenCode is a very powerful tool. However, running it directly on your host mach
 **ClosedCode** runs OpenCode (including its Web UI if desired) within an isolated container environment, significantly reducing the blast radius if the agent does something dumb—particularly the dreaded `rm -rf /`.
 
 - [Usage](#usage)
-    - [Why is installation by `brew` recommended?](#why-is-installation-by-brew-recommended)
+- [Installing Additional Packages](#installing-additional-packages)
+  - [Why is installation by `brew` recommended?](#why-is-installation-by-brew-recommended)
 - [Persistence and Volumes](#persistence-and-volumes)
 - [Other files e.g. git, ssh etc.](#other-files-eg-git-ssh-etc)
 - [Web UI](#web-ui)
@@ -34,7 +35,7 @@ For your current working directory, this command is:
 docker run -it --rm -v "$(pwd):/home/opencode/workspace" closedcode:latest
 ```
 
-# **Installing Additional Packages**
+## Installing Additional Packages
 
 You can install additional packages at container startup using environment variables.
 
@@ -57,7 +58,7 @@ docker run -it --rm \
   closedcode:latest
 ```
 
-#### Why is installation by `brew` recommended?
+### Why is installation by `brew` recommended?
 
 Homebrew has a huge array of tools and packages (~7000), many of which are missing in apt. As such, Homebrew is extremely likely to have the software you require, and its cache is easy to persist, which can be leveraged to make startup installs faster. Info on this to be added.
 
