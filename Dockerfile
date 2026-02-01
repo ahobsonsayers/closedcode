@@ -21,6 +21,7 @@ RUN  curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && \
     openssh-client \
     sed \
     sudo \
+    tar \
     unzip \
     util-linux \
     wget \
@@ -40,9 +41,12 @@ RUN useradd opencode --uid 1000 --home-dir /home/opencode --create-home && \
 USER opencode
 ENV HOME=/home/opencode
 
-# Install homebrew
-RUN NONINTERACTIVE=1 && \
-    curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash
+
+# Install homebrew (using tar for small size)
+RUN sudo mkdir -p /home/linuxbrew/.linuxbrew && \
+    sudo chown -R "$(id -u):$(id -g)" /home/linuxbrew/.linuxbrew \
+    curl -L https://github.com/Homebrew/brew/tarball/main | \
+    tar xz --strip-components 1 -C /home/linuxbrew/.linuxbrew
 
 # Set required homebrew envs
 ENV HOMEBREW_PREFIX="/home/linuxbrew/.linuxbrew"
