@@ -8,9 +8,6 @@ services:
     restart: unless-stopped
     ports:
       - 4096:4096
-    environment:
-      - OPENCODE_HOSTNAME=0.0.0.0
-      - OPENCODE_PORT=4096
     volumes:
       - ./data/workspace:/home/opencode/workspace
       - ./data/.config/opencode:/home/opencode/.config/opencode
