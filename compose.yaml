@@ -1,10 +1,10 @@
 services:
-  opencode:
-    container_name: opencode
+  closedcode:
+    container_name: closedcode
     image: arranhs/closedcode:latest
     build:
       context: .
-    command: ["web"]
+    command: ["web", "--hostname", "0.0.0.0", "--port", "4096"]
     restart: unless-stopped
     ports:
       - 4096:4096

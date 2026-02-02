@@ -47,7 +47,7 @@ docker run -it --rm \
   -v "$(pwd):/home/opencode/workspace" \
   -v "<config-path>:/home/opencode/.config/opencode" \
   -v "<data-path>:/home/opencode/.local/share/opencode" \
-  closedcode:latest
+  arranhs/closedcode:latest
 ```
 
 For example, if you want to use config and data used by OpenCode running on your local machine, run:
@@ -57,7 +57,7 @@ docker run -it --rm \
   -v "$(pwd):/home/opencode/workspace" \
   -v "$HOME/.config/opencode:/home/opencode/.config/opencode" \
   -v "$HOME/.local/share/opencode:/home/opencode/.local/share/opencode" \
-  closedcode:latest
+  arranhs/closedcode:latest
 ```
 
 ## Other files e.g. git, ssh etc.
@@ -76,7 +76,7 @@ docker run -it --rm \
   -v "$HOME/.gitconfig:/home/opencode/.gitconfig:ro" \
   -v "$HOME/.ssh:/home/opencode/.ssh:ro" \
   -v "$HOME/.config/gh:/home/opencode/.config/gh:ro" \
-  closedcode:latest
+  arranhs/closedcode:latest
 ```
 
 ## Installing Additional Packages
@@ -99,7 +99,7 @@ docker run -it --rm \
   -v "$(pwd):/home/opencode/workspace" \
   -e "APT_PACKAGES=python3 zip" \
   -e "BREW_PACKAGES=node go" \
-  closedcode:latest
+  arranhs/closedcode:latest
 ```
 
 ### Why is installation by `brew` recommended?
@@ -117,19 +117,20 @@ To run the Web UI using all the previously mentioned mounts, you can create a `c
 ```yaml
 services:
   closedcode:
-    image: closedcode:latest
-    command: ["web"]
+    container_name: closedcode
+    image: arranhs/closedcode:latest
+    build:
+      context: .
+    command: ["web", "--hostname", "0.0.0.0", "--port", "4096"]
+    restart: unless-stopped
     ports:
       - 4096:4096
     volumes:
-      - ~/opencode:/home/opencode/workspace # code files
-      - ~/.config/opencode:/home/opencode/.config/opencode # opencode config
-      - opencode:/home/opencode/.local/share/opencode # opencode data
+      - ./data/workspace:/home/opencode/workspace # code files
+      - ./data/.config/opencode:/home/opencode/.config/opencode # opencode config
+      - ./data/.local/share/opencode:/home/opencode/.local/share/opencode # opencode data
       - ~/.gitconfig:/home/opencode/.gitconfig:ro # git config
-      - ~/.ssh:/home/opencode/.ssh:ro # ssh keys
-      - ~/.config/gh:/home/opencode/.config/gh:ro # github cli config
-volumes:
-  opencode:
+      - ~/.config/gh/hosts.yml:/home/opencode/.config/gh/hosts.yml:ro # github cli config
 ```
 
 And then run with:
@@ -138,12 +139,10 @@ And then run with:
 docker compose up -d
 ```
 
-## Environment Variables
+### Environment Variables
 
-When running, the following environment variables can we set.
+When running the Web UI, the following env vars can be set to configure authentication.
 
-- `OPENCODE_HOSTNAME` - Address the Web UI binds to (Default: `0.0.0.0`)
-- `OPENCODE_PORT` - Port the Web UI listens on (Default: `4096`)
 - `OPENCODE_SERVER_USERNAME` - Username for Web UI authentication (Default: `opencode`)
 - `OPENCODE_SERVER_PASSWORD` - Password for Web UI authentication (Default: not set/no auth)
 

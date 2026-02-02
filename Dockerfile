@@ -79,8 +79,4 @@ VOLUME "$HOME/.local/share/opencode"
 
 WORKDIR "$HOME/workspace"
 
-# Environment variables for opencode web
-ENV OPENCODE_HOSTNAME=0.0.0.0
-ENV OPENCODE_PORT=4096
-
 ENTRYPOINT ["/entrypoint.sh", "bun", "run", "opencode"]
