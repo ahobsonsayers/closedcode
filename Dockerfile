@@ -6,7 +6,7 @@ ENV TZ=UTC
 
 # Install apt packages
 RUN apt-get update && \
-    apt-get install -y \
+    apt-get install -y --no-install-recommends \
     build-essential \
     ca-certificates \
     coreutils \
