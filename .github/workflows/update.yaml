@@ -12,6 +12,7 @@ jobs:
   update:
     name: Update version
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - name: Checkout code

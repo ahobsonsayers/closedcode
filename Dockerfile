@@ -56,7 +56,8 @@ RUN curl -fsSL https://bun.sh/install | bash
 ENV PATH=$HOME/.bun/bin:$PATH
 
 # Install opencode
-RUN bun install -g opencode-ai@$OPENCODE_VERSION
+# force and no-cahce are required to prevent bun issues on arm
+RUN bun install --global --force --no-cache opencode-ai@$OPENCODE_VERSION
 
 ENV OPENCODE_CONFIG='{ \
     "$schema": "https://opencode.ai/config.json", \

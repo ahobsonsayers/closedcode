@@ -15,6 +15,7 @@ jobs:
   get-version:
     name: Get version
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     outputs:
       opencode-version: ${{ steps.get-version.outputs.opencode-version }}
@@ -50,6 +51,7 @@ jobs:
             platform-slug: linux-arm64
 
     runs-on: ${{ matrix.runner }}
+    timeout-minutes: 10
 
     steps:
       - name: Checkout code
@@ -94,6 +96,7 @@ jobs:
     name: Merge Digests
     runs-on: ubuntu-latest
     needs: [get-version, build]
+    timeout-minutes: 10
 
     steps:
       - name: Set up Buildx
