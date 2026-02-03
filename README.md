@@ -97,7 +97,7 @@ For example, you can run:
 ```bash
 docker run -it --rm \
   -v "$(pwd):/home/opencode/workspace" \
-  -e "APT_PACKAGES=python3 zip" \
+  -e "APT_PACKAGES=python3" \
   -e "BREW_PACKAGES=node go" \
   arranhs/closedcode:latest
 ```
