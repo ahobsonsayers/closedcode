@@ -56,13 +56,12 @@ RUN curl -fsSL https://bun.sh/install | bash
 ENV PATH=$HOME/.bun/bin:$PATH
 
 # Install opencode
-# force and no-cahce are required to prevent bun issues on arm
-RUN bun install --global --force --no-cache opencode-ai@$OPENCODE_VERSION
+RUN bun install --global opencode-ai@$OPENCODE_VERSION
 
 ENV OPENCODE_CONFIG='{ \
     "$schema": "https://opencode.ai/config.json", \
     "autoupdate": false \
-    }'
+  }'
 
 # Add entrypoint script
 COPY entrypoint.sh /entrypoint.sh
@@ -74,7 +73,6 @@ RUN mkdir -p "$HOME/.config/opencode" && \
 
 # Persist opencode config
 VOLUME "$HOME/.config/opencode"
-
 # Persist opencode data
 VOLUME "$HOME/.local/share/opencode"
 
