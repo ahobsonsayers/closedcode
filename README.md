@@ -10,6 +10,8 @@ So naturally, it is therefore a good idea to run opencode in an isolated sandbox
 
 While this is not a perfect solution, it significantly reduces the blast radius when it does something dumb, particularly when running with "YOLO" permissions - no one wants to see `rm -rf /` being executed on their host machine!
 
+## **Contents** <!-- omit from toc -->
+
 - [**Why?** __](#why-)
 - [**Features**](#features)
 - [**Usage**](#usage)
