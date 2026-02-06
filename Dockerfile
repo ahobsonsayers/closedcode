@@ -6,9 +6,9 @@ ARG OPENCODE_VERSION=1.1.53
 RUN bun install --global opencode-ai@$OPENCODE_VERSION
 
 ENV OPENCODE_CONFIG='{ \
-    "$schema": "https://opencode.ai/config.json", \
-    "autoupdate": false \
-  }'
+        "$schema": "https://opencode.ai/config.json", \
+        "autoupdate": false \
+    }'
 
 # Setup persistence
 RUN mkdir -p "$HOME/.config/opencode" && \
