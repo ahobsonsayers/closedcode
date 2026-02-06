@@ -1,85 +1,92 @@
-# ClosedCode
+# **ClosedCode**
 
-ClosedCode is a Docker container for running OpenCode in an isolated environment.
+ClosedCode is a docker image for running [opencode](https://github.com/anomalyco/opencode) in an isolated sandboxed environment.
 
-## Why? <!-- omit from toc -->
+## **Why?** _<!-- omit from toc -->_
 
-OpenCode is a very powerful tool. However, running it directly on your host machine - especially with "YOLO" permissions - can pose serious security risk.
+[opencode](https://github.com/anomalyco/opencode) is an awesome tool for writing code and improving productivity. It is very powerful, but in the words of Uncle Ben - "With great power, comes great responsibility".
 
-**ClosedCode** runs OpenCode (including its Web UI if desired) within an isolated container environment, significantly reducing the blast radius if the agent does something dumb—particularly the dreaded `rm -rf /`
+So naturally, it is therefore a good idea to run opencode in an isolated sandboxed environment - such as a docker container.
 
-There are a few Docker images for OpenCode out there, so what makes this one different?
+While this is not a perfect solution, it significantly reduces the blast radius when it does something dumb, particularly when running with "YOLO" permissions - no one wants to see `rm -rf /` being executed on their host machine!
 
-- Small — at ~500MB this image is quite small by comparison to other images - but it has still got...
-- Batteries included — comes with most of the standard tools OpenCode typically uses, and that you usually need. This includes core utils, git, and ssh as expected, but also bun and gh (GitHub CLI).
-  Note: To keep the image small and unopinionated, it does not have languages like Python, Node, etc., installed. See next point for info on how these are supported.
-- Extensible — Extra tools, languages, or packages from either `brew` (recommended) or `apt` can be installed at runtime to add missing software that you require.
+- [**Why?** __](#why-)
+- [**Features**](#features)
+- [**Usage**](#usage)
+- [**Persistence and Volumes**](#persistence-and-volumes)
+- [**Other files e.g. git, gh etc.**](#other-files-eg-git-gh-etc)
+- [**Installing Additional Packages**](#installing-additional-packages)
+  - [**Why is installation by** `brew` **recommended?**](#why-is-installation-by-brew-recommended)
+- [**Web UI**](#web-ui)
+  - [**Environment Variables**](#environment-variables)
+- [**Extending**](#extending)
 
-- [Usage](#usage)
-- [Environment Variables](#environment-variables)
-- [Installing Additional Packages](#installing-additional-packages)
-  - [Why is installation by `brew` recommended?](#why-is-installation-by-brew-recommended)
-- [Persistence and Volumes](#persistence-and-volumes)
-- [Other files e.g. git, ssh etc.](#other-files-eg-git-ssh-etc)
-- [Web UI](#web-ui)
-- [Extending](#extending)
+## **Features**
 
-## Usage
+There are a few docker images for opencode out there, so what makes this one different?
 
-By default, when the container is run, it will run the `opencode` command with no args in the default working directory (`/home/opencode/workspace`).
+- Batteries included - comes with most of the standard tools that agents typically use and need. This includes core utils, git, and ssh as expected, but also bun and gh (GitHub CLI).
+- Extensible - Supports installation of extra tools, packages and programming languages from either `brew` (recommended) or `apt` at runtime
+- Surprisingly Small - despite all the above, the image is only ~500MB
+- Does not run as root - agents shouldn't need to run as superuser, but has...
+- Passwordless sudo - for those rare occasions you _do_ need root
+
+## **Usage**
+
+By default, when the container is run, it will run the `opencode` command with no args in the default working directory `/home/agent/workspace`.
 
 To get started quickly, simply mount your folder to this directory.
 
 For your current working directory, this command is:
 
 ```bash
-docker run -it --rm -v "$(pwd):/home/opencode/workspace" arranhs/closedcode:latest
+docker run -it --rm -v "$(pwd):/home/agent/workspace" arranhs/closedcode:latest
 ```
 
-## Persistence and Volumes
+## **Persistence and Volumes**
 
-By default, both OpenCode config and OpenCode sessions will be persisted across runs of the container; however, you might want to mount these to your host machine if you want easy access to the config files (for editing), or if you want to share config and state with OpenCode that you might run outside of this sandbox.
+By default, both opencode config and opencode sessions will be persisted across runs of the container; however, you might want to mount these to your host machine if you want easy access to the config files (for editing), or if you want to share config and state with opencode that you might run outside of this sandbox.
 
 To mount these folders, you can run:
 
 ```bash
 docker run -it --rm \
-  -v "$(pwd):/home/opencode/workspace" \
-  -v "<config-path>:/home/opencode/.config/opencode" \
-  -v "<data-path>:/home/opencode/.local/share/opencode" \
-  arranhs/closedcode:latest
+  -v "$(pwd):/home/agent/workspace" \
+-v "<config-path>:/home/agent/.config/opencode" \
+  -v "<data-path>:/home/agent/.local/share/opencode" \
+arranhs/closedcode:latest
 ```
 
-For example, if you want to use config and data used by OpenCode running on your local machine, run:
+For example, if you want to use config and data used by opencode running on your local machine, run:
 
 ```bash
 docker run -it --rm \
-  -v "$(pwd):/home/opencode/workspace" \
-  -v "$HOME/.config/opencode:/home/opencode/.config/opencode" \
-  -v "$HOME/.local/share/opencode:/home/opencode/.local/share/opencode" \
-  arranhs/closedcode:latest
+  -v "$(pwd):/home/agent/workspace" \
+-v "$HOME/.config/opencode:/home/agent/.config/opencode" \
+  -v "$HOME/.local/share/opencode:/home/agent/.local/share/opencode" \
+arranhs/closedcode:latest
 ```
 
-## Other files e.g. git, ssh etc.
+## **Other files e.g. git, gh etc.**
 
-To get the most out of OpenCode running in this sandbox, it is likely you also want to mount additional files from your local machine—such as your git config and GitHub credentials from using the GitHub CLI (using the `gh` CLI to auth with GitHub is highly recommended for ease).
+To get the most out of opencode running in this sandbox, it is likely you also want to mount additional files from your local machine - such as your git config and GitHub credentials from using the GitHub CLI (using the `gh` CLI to auth with GitHub is highly recommended for ease).
 
 For these files, it is recommended to mount them as read-only.
 
-To do this, you can run OpenCode with:
+To do this, you can run opencode with:
 
 ```bash
 docker run -it --rm \
-  -v "$(pwd):/home/opencode/workspace" \
-  -v "$HOME/.config/opencode:/home/opencode/.config/opencode" \
-  -v "$HOME/.local/share/opencode:/home/opencode/.local/share/opencode" \
-  -v "$HOME/.gitconfig:/home/opencode/.gitconfig:ro" \
-  -v "$HOME/.ssh:/home/opencode/.ssh:ro" \
-  -v "$HOME/.config/gh:/home/opencode/.config/gh:ro" \
+  -v "$(pwd):/home/agent/workspace" \
+-v "$HOME/.config/opencode:/home/agent/.config/opencode" \
+  -v "$HOME/.local/share/opencode:/home/agent/.local/share/opencode" \
+-v "$HOME/.gitconfig:/home/agent/.gitconfig:ro" \
+  -v "$HOME/.ssh:/home/agent/.ssh:ro" \
+-v "$HOME/.config/gh:/home/agent/.config/gh:ro" \
   arranhs/closedcode:latest
 ```
 
-## Installing Additional Packages
+## **Installing Additional Packages**
 
 You can install additional packages at container startup using environment variables.
 
@@ -96,21 +103,21 @@ For example, you can run:
 
 ```bash
 docker run -it --rm \
-  -v "$(pwd):/home/opencode/workspace" \
-  -e "APT_PACKAGES=python3" \
+  -v "$(pwd):/home/agent/workspace" \
+-e "APT_PACKAGES=python3" \
   -e "BREW_PACKAGES=node go" \
-  arranhs/closedcode:latest
+arranhs/closedcode:latest
 ```
 
-### Why is installation by `brew` recommended?
+### **Why is installation by** `brew` **recommended?**
 
 Homebrew has a huge array of tools and packages (~7000), many of which are missing in apt. As such, Homebrew is extremely likely to have the software you require, and its cache is easy to persist, which can be leveraged to make startup installs faster. Info on this to be added.
 
-## Web UI
+## **Web UI**
 
-It is also possible to run the OpenCode Web UI for development on the go or in your local browser.
+It is also possible to run the opencode Web UI for development on the go or in your local browser.
 
-To do this, using Docker Compose is recommended to easily run the service in the background.
+To do this, using docker Compose is recommended to easily run the service in the background.
 
 To run the Web UI using all the previously mentioned mounts, you can create a `compose.yaml` with the following content:
 
@@ -126,11 +133,11 @@ services:
     ports:
       - 4096:4096
     volumes:
-      - ./data/workspace:/home/opencode/workspace # code files
-      - ./data/.config/opencode:/home/opencode/.config/opencode # opencode config
-      - ./data/.local/share/opencode:/home/opencode/.local/share/opencode # opencode data
-      - ~/.gitconfig:/home/opencode/.gitconfig:ro # git config
-      - ~/.config/gh/hosts.yml:/home/opencode/.config/gh/hosts.yml:ro # github cli config
+      - ./data/workspace:/home/agent/workspace # code files
+      - ./data/.config/opencode:/home/agent/.config/opencode # opencode config
+      - ./data/.local/share/opencode:/home/agent/.local/share/opencode # opencode data
+      - ~/.gitconfig:/home/agent/.gitconfig # git config
+      - ~/.config/gh:/home/agent/.config/gh # github cli config
 ```
 
 And then run with:
@@ -139,14 +146,13 @@ And then run with:
 docker compose up -d
 ```
 
-### Environment Variables
+### **Environment Variables**
 
 When running the Web UI, the following env vars can be set to configure authentication.
 
 - `OPENCODE_SERVER_USERNAME` - Username for Web UI authentication (Default: `opencode`)
 - `OPENCODE_SERVER_PASSWORD` - Password for Web UI authentication (Default: not set/no auth)
 
+## **Extending**
 
-## Extending
-
-This image also works well as a base image to be extended and worked upon. An example of this can be seen in the OpenChamber repository, which offers a more feature-rich web UI for developing with OpenCode.
+This image also works well as a base image to be extended and worked upon. An example of this can be seen in the [closedchamber](https://github.com/ahobsonsayers/closedchamber) repository, which offers a docker container for running [openchamber](https://github.com/btriapitsyn/openchamber) - a feature-rich web ui for developing with opencode.
