@@ -9,8 +9,8 @@ services:
     ports:
       - 4096:4096
     volumes:
-      - ./data/workspace:/home/opencode/workspace
-      - ./data/.config/opencode:/home/opencode/.config/opencode
-      - ./data/.local/share/opencode:/home/opencode/.local/share/opencode
-      - ~/.gitconfig:/home/opencode/.gitconfig:ro
-      - ~/.config/gh/hosts.yml:/home/opencode/.config/gh/hosts.yml:ro
+      - ./data/workspace:/home/agent/workspace
+      - ./data/.config/opencode:/home/agent/.config/opencode
+      - ./data/.local/share/opencode:/home/agent/.local/share/opencode
+      - ~/.gitconfig:/home/agent/.gitconfig:ro
+      - ~/.config/gh/hosts.yml:/home/agent/.config/gh/hosts.yml:ro
